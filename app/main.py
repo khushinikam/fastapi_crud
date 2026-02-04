@@ -1,13 +1,15 @@
-from fastapi import FastAPI, Depends
+import os
+from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import engine, Base, get_db
 from app import model, schema
-from fastapi import HTTPException
 
 app = FastAPI()
 
-Base.metadata.create_all(bind=engine)
+if os.getenv("CI") != "true":
+    Base.metadata.create_all(bind=engine)
+
 
 @app.post("/users", response_model=schema.UserResponse)
 def create_user(user: schema.UserCreate, db: Session = Depends(get_db)):
