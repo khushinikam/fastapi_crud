@@ -7,8 +7,9 @@ from app import model, schema
 
 app = FastAPI()
 
-if os.getenv("CI") != "true":
-    Base.metadata.create_all(bind=engine)
+def on_startup():
+    if os.getenv("CI") != "true":
+        Base.metadata.create_all(bind=engine)
 
 
 @app.post("/users", response_model=schema.UserResponse)
